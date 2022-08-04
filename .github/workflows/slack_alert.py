@@ -61,7 +61,7 @@ message = {
 }
 
 headers = {
-    "Content-type": "application/json"
+    'Content-Type': 'application/json'
 }
 
 if __name__ == "__main__":
@@ -76,9 +76,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if "beta" in args.version.lower():
-        message["attachments"][0]["blocks"][0]["text"] = "Beta Release Blog Post"
+        message["attachments"][0]["blocks"][0]["text"]["text"] = "Beta Release Blog Post"
     else:
-        message["attachments"][0]["blocks"][0]["text"] = "GA Release Blog Post"
+        message["attachments"][0]["blocks"][0]["text"]["text"] = "GA Release Blog Post"
 
     github_url = f"https://github.com/{args.github_username}"
     message["attachments"][0]["blocks"][1]["fields"][0]["text"] = f"*Version:*\n {args.version}"
@@ -100,5 +100,11 @@ if __name__ == "__main__":
         issue_title = issue["title"]
         issue_number = issue["number"]
         message["attachments"][0]["blocks"][4]["text"]["text"] += f"\n <{issue_url}| {issue_title}> #{issue_number}"
+    
+    response = requests.post(args.slackhook, headers=headers, data=json.dumps(message))
 
-    requests.post(args.slackhook, headers=headers, data=json.dumps(message))
+    if response.status_code != 200:
+        raise ValueError(
+            'Request to slack returned an error %s, the response is:\n%s'
+            % (response.status_code, response.text)
+        )
