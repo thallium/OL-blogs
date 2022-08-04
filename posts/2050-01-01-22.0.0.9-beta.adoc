@@ -1,0 +1,480 @@
+---
+layout: post
+title: "TITLE"
+# Do NOT change the categories section
+categories: blog
+author_picture: https://avatars3.githubusercontent.com/thallium
+author_github: https://github.com/thallium
+seo-title: TITLE - makes sure it ends with - OpenLiberty.io
+seo-description: DESCRIPTION
+blog_description: DESCRIPTION
+open-graph-image: https://openliberty.io/img/twitter_card.jpg
+---
+= TITLE
+Gengchen <https://github.com/thallium>
+:imagesdir: /
+:url-prefix:
+:url-about: /
+//Blank line here is necessary before starting the body of the post.
+
+// // // // // // // //
+// In the preceding section:
+// Do not insert any blank lines between any of the lines.
+// Do not remove or edit the variables on the lines beneath the author name.
+//
+// "open-graph-image" is set to OL logo. Whenever possible update this to a more appriopriate/specific image (For example if present an image that is being used in the post). However, it
+// can be left empty which will set it to the default
+//
+// Replace TITLE with the blog post title eg: MicroProfile 3.3 is now available on Open Liberty 20.0.0.4
+// Replace thallium with your GitHub username eg: lauracowen
+// Replace DESCRIPTION with a short summary (~60 words) of the release (a more succinct version of the first paragraph of the post).
+// Replace Gengchen with your name as you'd like it to be displayed, 
+// eg: LauraCowen
+//
+// For every link starting with "https://openliberty.io" in the post make sure to use
+// {url-prefix}. e.g- link:{url-prefix}/guides/GUIDENAME[GUIDENAME]:
+//
+// If adding image into the post add :
+// -------------------------
+// [.img_border_light]
+// image::img/blog/FILE_NAME[IMAGE CAPTION ,width=70%,align="center"]
+// -------------------------
+// "[.img_border_light]" = This adds a faint grey border around the image to make its edges sharper. Use it around screenshots but not           
+// around diagrams. Then double check how it looks.
+// There is also a "[.img_border_dark]" class which tends to work best with screenshots that are taken on dark backgrounds.
+// Change "FILE_NAME" to the name of the image file. Also make sure to put the image into the right folder which is: img/blog
+// change the "IMAGE CAPTION" to a couple words of what the image is
+// // // // // // // //
+
+BETA_RELEASE_SUMMARY
+
+// // // // // // // //
+// Change the RELEASE_SUMMARY to an introductory paragraph. This sentence is really
+// important becuase it is supposed to grab the readers attention.  Make sure to keep the blank lines 
+//
+// Throughout the doc, replace 22.0.0.9-beta with the version number of Open Liberty, eg: 22.0.0.2-beta
+// // // // // // // //
+
+The link:{url-about}[Open Liberty] 22.0.0.9-beta includes the following beta features (along with link:{url-prefix}/docs/latest/reference/feature/feature-overview.html[all GA features]):
+
+* <<SUB_TAG_0, Password Utilities 1.1>>
+* <<SUB_TAG_1, CDI 4.0>>
+* <<SUB_TAG_2, MicroProfile OpenAPI 3.1>>
+* <<SUB_TAG_3, RESTful Web Services 3.1>>
+* <<SUB_TAG_4, Jakarta JSON Binding and Processing>>
+* <<SUB_TAG_5, Jakarta EE 10 Expression Language 5.0>>
+* <<SUB_TAG_6, Concurrency 3.0 for Jakarta EE 10>>
+
+// // // // // // // //
+// In the preceding section:
+// Change SUB_FEATURE_TITLE to the feature that is included in this release and
+// change the SUB_TAG_1/2/3 to the heading tags
+//
+// However if there's only 1 new feature, delete the previous section and change it to the following sentence:
+// "The link:{url-about}[Open Liberty] 22.0.0.9-beta includes SUB_FEATURE_TITLE"
+// // // // // // // //
+
+// https://github.com/OpenLiberty/open-liberty/issues/21827
+[#SUB_TAG_0]
+== Password Utilities 1.1
+
+   
+   - A sentence or two that introduces the update to someone new to the general technology/concept.
+   ```
+   The new passwordUtilities-1.1 feature has been created to no longer start the federatedRegistry-1.0 feature or the JCA / connectors features. The new feature is part of core edition, whereas the passwordUtilities-1.0 feature is part of base edition.
+   ```
+
+   - What was the problem before and how does your update make their life better? (Why should they care?)
+   ```
+   Stand-alone user registries will no longer be forcefully federated, which sometimes results in slightly different behavior. The password utilities APIs can now be used in core edition.
+   ```
+   - Briefly explain how to make your update work. Include screenshots, diagrams, and/or code snippets, and provide a `server.xml` snippet.
+   ```
+   Add the passwordUtilities-1.1 feature to the list of features in the server.xml file:
+   
+   <featureManager>
+       <feature>passwordUtilities-1.1</feature>
+   </featureManager>
+   ```
+   
+   - Where can they find out more about this specific update (eg Open Liberty docs, Javadoc) and/or the wider technology?
+
+`https://openliberty.io/docs/latest/reference/feature/passwordUtilities-1.0.html`
+
+
+// https://github.com/OpenLiberty/open-liberty/issues/21777
+[#SUB_TAG_1]
+== CDI 4.0
+
+   
+- A sentence or two that introduces the update to someone new to the general technology/concept.
+  - CDI allows objects to be bound to lifecycle contexts, to be injected, to be associated with interceptors and decorators, and to interact in a loosely coupled fashion by firing and observing events.
+
+- What was the problem before and how does your update make their life better? (Why should they care?)
+  - As part of Jakarta EE 10 Core Profile, CDI 4.0 brings some functional updates and removes some previously deprecated APIs. This update also brings in new EE 10 versions of the Jakarta Annotations and Jakarta Interceptors APIs.
+  - Support has been added for Build Compatibile Extensions, along with a new Metamodel that is less dependent on reflection at runtime.
+ 
+```java
+public class MyExtension implements BuildCompatibleExtension {
+    @Enhancement(type=MyFooService.class)
+    public void foo(ClassConfig clazz) {
+        clazz.addAnnotation(MyQualifier.class)
+    }
+}
+```
+- In previous versions of CDI, an empty beans.xml file indicated that an archive should be treated as an Explicit Bean Archive (the equivalent of bean-discovery-mode="all"). In CDI 4.0, an empty beans.xml will now cause an archive to be treated as an Implicit Bean Archive (the equivalent of bean-discovery-mode="annotated"). Should it be needed, a configuration option has been provided to enable compatibility with previous versions.
+- In previous versions of CDI, a non-empty beans.xml file which did not include a version attribute was defaulted to mean bean-discovery-mode="all". In CDI 4.0, it will now default to bean-discovery-mode="annotated".
+- Two new Observable Container State Events have been added; Startup and Shutdown. Applications can listen for these events to be notified when the CDI container is starting up and being shut down.
+- A new Handle API is added to make programatic lookup of Beans and Instances easier.
+- (Jakarta Annotations 2.1) The @Priority annotation can now be applied to any program element. This is used by CDI 4.0 to allow Stereotypes to include a Pritory annotation.
+- Some previously deprecated CDI APIs have been removed.
+  - @New qualifier
+    - Replaced by @Dependent beans (since CDI 1.1)
+  - Bean#isNullable()
+    - Not used by the implementation (since CDI 1.1)
+  - BeanManager#fireEvent()
+    - Use BeanManager.getEvent() instead (since CDI 2.0)
+  - BeanManager#createInjectionTarget(AnnotatedType)
+    - Replaced by BeanManager#getInjectionTargetFactory(AnnotatedType) (since CDI 1.1)
+  - BeforeBeanDiscovery#addAnnotatedType(AnnotatedType)
+    - Replaced by BeforeBeanDiscovery#addAnnotatedType(AnnotatedType, String) (since CDI 1.1)
+ - The Liberty <cdi12> configuration element has been superseded by a new <cdi> element that applies to all versions of CDI (1.2 and newer).
+
+```xml
+<cdi enableImplicitBeanArchives="false" emptyBeansXmlCDI3Compatibility="true"/>
+```
+- The attribute `enableImplicitBeanArchives` is the same as it was in previous versions.
+  - If set to "true" (default) then archives which do not contain a beans.xml file will be treated as Implicit Bean Archives and will be scanned for classes that have Bean Defining Annotations.
+  - If set to "false" then archives which do not contain a beans.xml file will be not be scanned for annotated classes.
+- The attribute `emptyBeansXmlCDI3Compatibility` only applies to CDI 4.0.
+  - If set to "true" then an archive which contains an empty beans.xml file will be treated as an Explicit Bean Archive (as it was in CDI 3.0 and earlier)
+  - If set to "false" (default) then an archive which contains an empty beans.xml file will be treated as an Implicit Bean Archive. This is the equivalent to setting bean-discovery-mode="annotated".
+
+   - Briefly explain how to make your update work. Include screenshots, diagrams, and/or code snippets, and provide a `server.xml` snippet.
+
+```xml
+<featureManager>
+  <feature>cdi-4.0</feature>
+</featureManager>
+
+<cdi enableImplicitBeanArchives="false" emptyBeansXmlCDI3Compatibility="true"/>
+```
+   
+   - Where can they find out more about this specific update (eg Open Liberty docs, Javadoc) and/or the wider technology?
+
+
+// https://github.com/OpenLiberty/open-liberty/issues/21769
+[#SUB_TAG_2]
+== MicroProfile OpenAPI 3.1
+
+
+OpenAPI is a standardised way of documenting REST APIs in a JSON or YAML format. MicroProfile OpenAPI helps you generate and serve OpenAPI documentation for your REST applications built using JAX-RS or Jakarta restfulWS. This can be useful for developers to test out the API during development, or for people using the API in production.
+
+To use it, add the `mpOpenAPI-3.1` feature to your server.xml, deploy your rest application and then visit `/openapi` on your liberty server to view the OpenAPI documentation, or visit `/openapi/ui` for a user interface that lets you browse through it. You can enhance the documentation using [annotations](https://download.eclipse.org/microprofile/microprofile-open-api-3.1-RC2/apidocs/) to add things like textual descriptions to each method. The annotations are available as a maven dependency:
+
+```xml
+<dependency>
+    <groupId>org.eclipse.microprofile.openapi</groupId>
+    <artifactId>microprofile-openapi-api</artifactId>
+    <version>3.1-RC2</version>
+</dependency>
+```
+
+Version 3.1 is a small release which includes:
+
+* Some Jakarta Bean Validation annotations will now be read and their restrictions will be added to object schemas
+* Most annotations now include an `extension` attribute
+* `@SecurityRequirementsSet` can now be used to document operations where authentication is optional or where more than one authentication mechanism is required
+
+More information about MicroProfile OpenAPI can be found in
+* the liberty [guide](https://openliberty.io/guides/microprofile-openapi.html)
+* the liberty [documentation](https://openliberty.io/docs/latest/documentation-openapi.html)
+* the [javadoc](https://download.eclipse.org/microprofile/microprofile-open-api-3.1-RC2/apidocs/)
+* the [specification](https://download.eclipse.org/microprofile/microprofile-open-api-3.1-RC2/microprofile-openapi-spec-3.1-RC2.html)
+
+
+
+// https://github.com/OpenLiberty/open-liberty/issues/21764
+[#SUB_TAG_3]
+== RESTful Web Services 3.1
+
+   
+     
+RESTful Web Services 3.1 (also known as Jakarta Rest 3.1 and formerly known as JAX-RS) is now available in Open Liberty Betas! The 3.1 implementation is an EE10 technology, uses the package name (`jakarta.*`), and the  implementation is based on RESTEasy.  Please see `Appendix D.1. Changes Since 3.0 Release` of the  Jakarta RESTful Web Services specification at https://jakarta.ee/specifications/restful-ws/3.1/jakarta-restful-ws-spec-3.1.pdf for information on the changes provided in this release.  
+
+Give it a try - and if you encounter any issues, please let us know!
+
+You can enable RESTful Web Services 3.1 by using the `restfulWS-3.1` feature in the server.xml.  If you only need a RESTful client, then you can use the `restfulWSClient-3.1` feature instead.  
+
+If you want to learn more about RESTful Web Services or see what is coming in future releases, please visit the community page at: https://projects.eclipse.org/projects/ee4j.rest
+
+
+// https://github.com/OpenLiberty/open-liberty/issues/21753
+[#SUB_TAG_4]
+== Jakarta JSON Binding and Processing
+
+   - A sentence or two that introduces the update to someone new to the general technology/concept.
+
+The Jakarta JSON Processing specification allows users to parse and generate JSON strings.  The Jakarta JSON Binding specification is built on top of JSON Processing and allows users to serialize and deserialize Java objects into JSON. 
+
+   - What was the problem before and how does your update make their life better? (Why should they care?)
+  
+The Jakarta JSON Processing specification has been updated with enhancements for handling duplicate keys when parsing JSON, and better handling of java.lang.Number subclasses when generating JSON strings. The Jakarta JSON Binding specification has been updated to support polymorphism.  This means that users can serialize
+   
+   - Briefly explain how to make your update work. Include screenshots, diagrams, and/or code snippets, and provide a `server.xml` snippet.
+
+Open Liberty provides default implementations for both Jakarta JSON Processing and Binding.  For JSON Processing we provide users with the Parsson implementation.  For JSON Binding we provide users with the Yasson implementation. 
+To get these default implementations you can enable the `jsonp-2.1` and/or `jsonb-3.0` features. 
+
+```xml
+<featureManager>
+    <feature>jsonb-3.0</feature>
+    <feature>jsonp-2.1</feature>
+</featureManager>
+```
+
+If you want to use another Jakarta JSON Processing 2.1 or Binding 3.0 implementation you can do so by enabling the `jsonpContainer-2.1` and `jsonbContainer-3.0` features respectively.  The JSON Container features require users to configure Basic Extensions using Liberty Libraries (BELLs) that point to their third-party implementations.
+
+```xml
+<featureManager>
+    <feature>jsonbContainer-3.0</feature>
+    <feature>jsonpContainer-2.1</feature>
+</featureManager>
+
+<library id="myJsonBindingProvider">
+  <file name="${path.to.json.binding.provider}"/>
+</library>
+
+<bell libraryRef="myJsonBindingProvider"/>
+
+<library id="myJsonProcessingProvider">
+  <file name="${path.to.json.processing.provider}"/>
+</library>
+
+<bell libraryRef="myJsonProcessingProvider"/>
+```
+
+NOTE: When you enable `jsonb-3.0` or `jsonbContainer-3.0` the `jsonp-2.1` feature is automatically enabled.  However, enabling the jsonpContainer-3.0 feature will supersede the `jsonp-2.1` feature and allow the user to provide their own implementation. 
+   
+   - Where can they find out more about this specific update (eg Open Liberty docs, Javadoc) and/or the wider technology?
+ 
+Open Liberty Docs: https://openliberty.io/docs/latest/json-p-b.html
+Jakarta JSON Processing: https://javaee.github.io/jsonp/getting-started.html
+Jakarta JSON Binding: https://javaee.github.io/jsonb-spec/getting-started.html
+Open Liberty Guide: https://openliberty.io/guides/rest-client-java.html
+
+
+// https://github.com/OpenLiberty/open-liberty/issues/21750
+[#SUB_TAG_5]
+== Jakarta EE 10 Expression Language 5.0
+
+   
+   - A sentence or two that introduces the update to someone new to the general technology/concept.
+
+> The `expressionLanguage-5.0` feature is an implementation of the Expression Language 5.0 Specification for Jakarta EE 10. The Expression Language 5.0 includes a number of new features and specification clarifications. A link to the Expression Language 5.0 specification can be found here: https://jakarta.ee/specifications/expression-language/5.0/
+
+ 
+   - What was the problem before and how does your update make their life better? (Why should they care?)
+
+> The following links shows the change history of the Specification between the Expression Language 4.0 and Expression Language 5.0: https://jakarta.ee/specifications/expression-language/5.0/jakarta-expression-language-spec-5.0.html#changes-between-5-0-and-4-0.
+> 
+> One of the new features is the addition of the [MethodReference](https://jakarta.ee/specifications/expression-language/5.0/apidocs/jakarta.el/jakarta/el/methodreference) which `"Provides information about the method to which a method expression resolves."` This new class allows developers to access any annotations present on a particular method using the `getAnnotations()` method. There are also a few deprecations and clarifications within the Expression Language 5.0 Specification. 
+> 
+
+   
+   - Briefly explain how to make your update work. Include screenshots, diagrams, and/or code snippets, and provide a `server.xml` snippet.
+```
+   <featureManager>
+        <feature>expressionLanguage-5.0</feature>
+    </featureManager>
+```
+   
+   - Where can they find out more about this specific update (eg Open Liberty docs, Javadoc) and/or the wider technology?
+
+> The Jakarta Expression Language 5.0 Specification and Javadocs can be found here: https://jakarta.ee/specifications/expression-language/5.0/
+
+
+// https://github.com/OpenLiberty/open-liberty/issues/20014
+[#SUB_TAG_6]
+== Concurrency 3.0 for Jakarta EE 10
+
+   
+   - A sentence or two that introduces the update to someone new to the general technology/concept.
+   **The Jakarta Concurrency specification enhances the set of parallel and reactive programming models available to applications, enabling tasks and completion stage actions to run with the thread context of the submitter.**
+
+   - What was the problem before and how does your update make their life better? (Why should they care?)
+   **Concurrency 3.0 introduces a variety of enhancements, including...**
+     - Resource definition annotations that put applications in control of defining the concurrency constraints and thread context types that the application requires.
+     - Context-aware completion stages that are managed by the container.
+     - Asynchronous methods that are backed by context-aware completion stages.
+     - Improvements to Triggers for customizing the scheduling of business logic according to dates and times within one's own time zone.
+     - Standardized integration for third-party providers of thread context.
+
+   - Briefly explain how to make your update work. Include screenshots, diagrams, and/or code snippets, and provide a `server.xml` snippet.
+   **Enable the `concurrent-3.0` feature in server.xml, along with other Jakarta EE 10 beta features that you wish to use in combination with it,**
+
+```
+<featureManager>
+  <feature>concurrent-3.0</feature>
+  <!-- other features that are used in the examples, -->
+  <feature>cdi-4.0</feature>
+  <feature>jdbc-4.2</feature>
+  <feature>jndi-1.0</feature>
+  <feature>servlet-6.0</feature>
+</featureManager>
+```
+
+You can still configure `<managedExecutorService>` and other Concurrency resource types in `server.xml` as you did for previous versions of the feature.
+
+However, Concurrency 3.0 gives you the ability to define those resources within application components:
+
+```
+import static jakarta.enterprise.concurrent.ContextServiceDefinition.ALL_REMAINING;
+import static jakarta.enterprise.concurrent.ContextServiceDefinition.APPLICATION;
+import static jakarta.enterprise.concurrent.ContextServiceDefinition.SECURITY;
+import static jakarta.enterprise.concurrent.ContextServiceDefinition.TRANSACTION;
+
+import jakarta.annotation.Resource;
+import jakarta.enterprise.concurrent.ContextServiceDefinition;
+import jakarta.enterprise.concurrent.ManagedExecutorDefinition;
+import jakarta.enterprise.concurrent.ManagedExecutorService;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.*;
+
+import java.sql.*;
+import java.util.concurrent.CompletionException;
+
+@ContextServiceDefinition(name = "java:app/concurrent/AppContextOnly",
+        propagated = APPLICATION,
+        cleared = { TRANSACTION, SECURITY },
+        unchanged = ALL_REMAINING)
+@ManagedExecutorDefinition(name = "java:module/concurrent/MyExecutor",
+        context = "java:app/concurrent/AppContextOnly",
+        maxAsync = 5)
+public class MyServlet extends HttpServlet {
+    @Resource(name = "java:module/env/concurrent/MyExecutorRef",
+              lookup = "java:module/concurrent/MyExecutor")
+    ManagedExecutorService myExecutor;
+
+    @Inject AccountsBean accounts;
+    ...
+```
+
+With the CDI feature enabled, methods that return a CompletionStage or CompletableFuture can be designated to run asynchronously by annotating them with `@Asynchronous`.
+
+```
+import jakarta.enterprise.concurrent.Asynchronous;
+import jakarta.inject.Singleton;
+
+import java.sql.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
+@Singleton
+public class AccountsBean {
+
+    @Asynchronous(executor = "java:module/concurrent/MyExecutor")
+    CompletableFuture<List<Account>> findOverdue(int minDaysLate) {
+        List<Account> overdueAccounts = new ArrayList<Account>();
+        try {
+            // Resource reference lookup requires context of the application component,
+            DataSource db = InitialContext.doLookup("java:comp/env/jdbc/account-db-ref");
+            ...
+            return Asynchronous.Result.complete(overdueAccounts);
+        } catch (NamingException | SQLException x) {
+            throw new CompletionException(x);
+        }
+    }
+
+    ...
+```
+
+When the application invokes the asynchronous method, the container intercepts the invocation and hands back a completion stage representing its eventual completion, which is arranged by the ManagedExecutorService.
+
+```
+    public void doGet(HttpServletRequest req, HttpServletResponse res) {
+        ...
+        accounts.findOverdue(60).thenAccept(this::sendReminder);
+        ...
+    }
+
+    void sendReminder(List<Account> overdue) {
+        try {
+            // Resource reference lookup requires context of the application component,
+            DataSource db = InitialContext.doLookup("java:comp/env/jdbc/customer-db-ref");
+            ...
+        } catch (NamingException | SQLException x) {
+            throw new CompletionException(x);
+        }
+    }
+```
+
+
+   - Where can they find out more about this specific update (eg Open Liberty docs, Javadoc) and/or the wider technology?
+**The Concurrency 3.0 specification and JavaDoc are published here,**
+https://jakarta.ee/specifications/concurrency/3.0/jakarta-concurrency-spec-3.0.html
+https://jakarta.ee/specifications/concurrency/3.0/apidocs
+
+**The API jar will is available at the following location on Maven,**
+https://repo1.maven.org/maven2/jakarta/enterprise/concurrent/jakarta.enterprise.concurrent-api/3.0.0/jakarta.enterprise.concurrent-api-3.0.0.jar
+
+```
+<dependency>
+    <groupId>jakarta.enterprise.concurrent</groupId>
+    <artifactId>jakarta.enterprise.concurrent-api</artifactId>
+    <version>3.0.0</version>
+</dependency>
+```
+
+
+
+
+To enable the new beta features in your app, add them to your `server.xml`:
+
+[source, xml]
+----
+
+----
+
+[#run]
+=== Try it now 
+
+To try out these features, just update your build tools to pull the Open Liberty All Beta Features package instead of the main release. The beta works with Java SE XX, Java SE 17, Java SE 11, and Java SE 8.
+// // // // // // // //
+// In the preceding section:
+// Check if a new non-LTS Java SE version is supported that needs to be added to the list (17, 11, and 8 are LTS and will remain for a while)
+// // // // // // // //
+
+If you're using link:{url-prefix}/guides/maven-intro.html[Maven], here are the coordinates:
+
+[source,xml]
+----
+<dependency>
+  <groupId>io.openliberty.beta</groupId>
+  <artifactId>openliberty-runtime</artifactId>
+  <version>22.0.0.9-beta</version>
+  <type>pom</type>
+</dependency>
+----
+
+Or for link:{url-prefix}/guides/gradle-intro.html[Gradle]:
+
+[source,gradle]
+----
+dependencies {
+    libertyRuntime group: 'io.openliberty.beta', name: 'openliberty-runtime', version: '[22.0.0.9-beta,)'
+}
+----
+
+Or take a look at our link:{url-prefix}/downloads/#runtime_betas[Downloads page].
+
+[#feedback]
+== We welcome your feedback
+
+Let us know what you think on link:https://groups.io/g/openliberty[our mailing list]. If you hit a problem, link:https://stackoverflow.com/questions/tagged/open-liberty[post a question on StackOverflow]. If you hit a bug, link:https://github.com/OpenLiberty/open-liberty/issues[please raise an issue].
+
+
