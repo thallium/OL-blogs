@@ -88,4 +88,4 @@ jobs:
         run: |
           python3 .github/workflows/slack_alert.py \
           ${{ inputs.version }} ${{ inputs.publish-date }} ${{ inputs.author-name }} ${{ inputs.github-username }} \
-          ${{ steps.create-pr-draft.outputs.pull-request-number }} ${{ steps.gen-url.outputs.url }} ${{ secrets.SLACK_HOOK }} 
+          ${{ steps.create-pr-draft.outputs.pull-request-number }} ${{ steps.gen-url.outputs.draft-url }} ${{ secrets.SLACK_HOOK }} 
