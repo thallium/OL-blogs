@@ -11,12 +11,12 @@ on:
         default: '2050-01-01'
         type: string
       author-name:
-        description: 'Name of the anthor, put the name in quotes if the name contains space'
+        description: 'Name of the author, put the name in quotes if the name contains space'
         required: true
         # default: ${{ github.actor }}
         type: string
       github-username:
-        description: 'GitHub username of the anthor'
+        description: 'GitHub username of the author'
         required: true
         # default: ${{ github.actor }}
         type: string
@@ -51,12 +51,22 @@ jobs:
         with:
           commit-message: ${{ inputs.version }}
           branch: ${{ inputs.version }}
+          base: draft
+          title: ${{ inputs.version }}
+          assignees: ${{ github.actor }}
+          body: "Preview draft at: ${{ steps.gen-url.outputs.url }}"
+
+      - name: Create PR to staging
+        id: create-pr-staging
+        uses: peter-evans/create-pull-request@v4
+        with:
+          commit-message: ${{ inputs.version }}
+          branch: ${{ inputs.version }}
           base: staging
           title: ${{ inputs.version }}
           assignees: ${{ github.actor }}
           body: "Preview draft at: ${{ steps.gen-url.outputs.url }}"
-          # TODO put links in the body
-          
+
       - name: Checkout repository code
         uses: actions/checkout@v2
 
