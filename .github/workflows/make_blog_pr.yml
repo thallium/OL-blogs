@@ -24,7 +24,7 @@ on:
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 jobs:
-  Create Blog:
+  create_blog_and_pr:
     name: Automate release and beta blog PR creation
     runs-on: ubuntu-latest
     steps:
