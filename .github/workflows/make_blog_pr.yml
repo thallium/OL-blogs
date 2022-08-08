@@ -24,7 +24,7 @@ on:
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 jobs:
-  ListIssues:
+  Create Blog:
     name: Automate release and beta blog PR creation
     runs-on: ubuntu-latest
     steps:
@@ -35,20 +35,19 @@ jobs:
 
       - name: Create blog
         run: |
-          # git switch -c ${{ inputs.version }}
-          wget 'https://raw.githubusercontent.com/thallium/summer-project-blogs/master/main.py'
-          python3 main.py ${{ inputs.version }} ${{ inputs.publish-date }} ${{ inputs.author-name }} ${{ inputs.github-username }}
-          rm main.py
+          python3 .github/workflows/gen_blog.py ${{ inputs.version }} ${{ inputs.publish-date }} ${{ inputs.author-name }} ${{ inputs.github-username }}
 
       - name: Generate draft URL
         id: gen-url
         run:
           echo "::set-output name=url::https://draft-blogs-openlibertyio.mybluemix.net/blog/$(echo ${{ inputs.publish-date }} | tr - /)/${{ inputs.version }}.html"
 
-      - name: Create PR
-        id: create-pr
+      - name: Create PR to draft
+        id: create-pr-draft
         uses: peter-evans/create-pull-request@v4
         with:
+          add-paths: |
+            posts/*.adoc
           commit-message: ${{ inputs.version }}
           branch: ${{ inputs.version }}
           base: draft
@@ -56,10 +55,21 @@ jobs:
           assignees: ${{ github.actor }}
           body: "Preview draft at: ${{ steps.gen-url.outputs.url }}"
 
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: prod
+
+      - name: Create blog
+        run: |
+          python3 .github/workflows/gen_blog.py ${{ inputs.version }} ${{ inputs.publish-date }} ${{ inputs.author-name }} ${{ inputs.github-username }}
+
       - name: Create PR to staging
         id: create-pr-staging
         uses: peter-evans/create-pull-request@v4
         with:
+          add-paths: |
+            posts/*.adoc
           commit-message: ${{ inputs.version }}
           branch: ${{ inputs.version }}
           base: staging
@@ -68,7 +78,7 @@ jobs:
           body: "Preview draft at: ${{ steps.gen-url.outputs.url }}"
 
       - name: Checkout repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Send Slack alert
         run: |
