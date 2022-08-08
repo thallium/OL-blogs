@@ -85,7 +85,7 @@ def main():
     BLOG_ISSUE_URL = f"https://api.github.com/repos/OpenLiberty/open-liberty/issues?labels=blog,target:{version_no_dots}"
 
     issues = json.loads(requests.get(BLOG_ISSUE_URL).text)
-    # print(issues)
+
     toc, content = make_blog(issues, is_beta)
 
     template = requests.get(BETA_TEMPLATE_URL if is_beta else GA_TEMPLATE_URL).text;
@@ -118,7 +118,7 @@ def main():
     filename = f"{publish_date}-{version}.adoc"
     with open(f"posts/{filename}", "w") as fp:
         fp.write(template)
-    print('::set-output name=reviewers::' + ','.join([str(p) for p in sorted(list(people))]))
+    print('::set-output name=reviewers::' + ','.join(sorted(list(people))))
 
 if __name__ == "__main__":
     main()
