@@ -76,9 +76,9 @@ jobs:
           branch: ${{ inputs.version }}
           base: staging
           title: ${{ inputs.version }}
-          # assignees: ${{ github.actor }}
+          assignees: ${{ github.actor }}
           body: "Preview at draft site: ${{ steps.gen-url.outputs.draft-url }}\nPreview at staging site: ${{ steps.gen-url.outputs.staging-url }}"
-          reviewers: ${{ steps.gen-blog.outputs.reviewers }}
+          # reviewers: ${{ steps.gen-blog.outputs.reviewers }}
           draft: true
 
       - name: Checkout repository code
