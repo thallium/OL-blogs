@@ -39,8 +39,9 @@ jobs:
 
       - name: Generate draft URL
         id: gen-url
-        run:
-          echo "::set-output name=url::https://draft-blogs-openlibertyio.mybluemix.net/blog/$(echo ${{ inputs.publish-date }} | tr - /)/${{ inputs.version }}.html"
+        run: |
+          echo "::set-output name=draft-url::https://draft-blogs-openlibertyio.mybluemix.net/blog/$(echo ${{ inputs.publish-date }} | tr - /)/${{ inputs.version }}.html"
+          echo "::set-output name=staging-url::https://staging-blogs-openlibertyio.mybluemix.net/blog/$(echo ${{ inputs.publish-date }} | tr - /)/${{ inputs.version }}.html"
 
       - name: Create PR to draft
         id: create-pr-draft
@@ -53,7 +54,7 @@ jobs:
           base: draft
           title: ${{ inputs.version }}
           assignees: ${{ github.actor }}
-          body: "Preview draft at: ${{ steps.gen-url.outputs.url }}"
+          body: "Preview at draft site: ${{ steps.gen-url.outputs.draft-url }}"
 
       - name: Checkout
         uses: actions/checkout@v3
@@ -61,6 +62,7 @@ jobs:
           ref: prod
 
       - name: Create blog
+        id: gen-blog
         run: |
           python3 .github/workflows/gen_blog.py ${{ inputs.version }} ${{ inputs.publish-date }} ${{ inputs.author-name }} ${{ inputs.github-username }}
 
@@ -75,7 +77,9 @@ jobs:
           base: staging
           title: ${{ inputs.version }}
           assignees: ${{ github.actor }}
-          body: "Preview draft at: ${{ steps.gen-url.outputs.url }}"
+          body: "Preview at draft site: ${{ steps.gen-url.outputs.draft-url }}\nPreview at staging site: ${{ steps.gen-url.outputs.staging-url }}"
+          reviewers: ${{ steps.gen-blog.outputs.reviewers }}
+          draft: true
 
       - name: Checkout repository code
         uses: actions/checkout@v3
@@ -84,4 +88,4 @@ jobs:
         run: |
           python3 .github/workflows/slack_alert.py \
           ${{ inputs.version }} ${{ inputs.publish-date }} ${{ inputs.author-name }} ${{ inputs.github-username }} \
-          ${{ steps.create-pr.outputs.pull-request-number }} ${{ steps.gen-url.outputs.url }} ${{ secrets.SLACK_HOOK }} 
+          ${{ steps.create-pr-draft.outputs.pull-request-number }} ${{ steps.gen-url.outputs.url }} ${{ secrets.SLACK_HOOK }} 
