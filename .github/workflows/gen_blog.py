@@ -32,6 +32,8 @@ BETA_CONTENT_SECTION = '''[#SUB_TAG_1]
 // // // // // // // //
 ----'''
 
+people = set()
+
 def get_linked_issue(body):
     result = re.search(r'See (?:the )?Beta blog issue.+?(\d+)', body, re.IGNORECASE)
     if result:
@@ -44,6 +46,8 @@ def make_blog(issues, is_beta):
     prefix = "BETA BLOG - " if is_beta else "GA BLOG - "
 
     for i, issue in enumerate(issues):
+        people.add(issue['user']['login'])
+        people.update([assignee['login'] for assignee in issue['assignees']])
         title = issue["title"].replace(prefix, "")
         body = get_linked_issue(issue['body']) or issue['body']
 
@@ -114,6 +118,7 @@ def main():
     filename = f"{publish_date}-{version}.adoc"
     with open(f"posts/{filename}", "w") as fp:
         fp.write(template)
+    print('::set-output name=reviewers::' + ','.join([str(p) for p in sorted(list(people))]))
 
 if __name__ == "__main__":
     main()
