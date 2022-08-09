@@ -36,8 +36,6 @@ jobs:
       - name: Create blog
         run: |
           python3 .github/workflows/gen_blog.py ${{ inputs.version }} ${{ inputs.publish-date }} ${{ inputs.author-name }} ${{ inputs.github-username }}
-          git fetch
-          git switch draft
 
       - name: Generate draft URL
         id: gen-url
@@ -52,7 +50,7 @@ jobs:
           add-paths: |
             posts/*.adoc
           commit-message: ${{ inputs.version }}
-          branch: ${{ inputs.version }}
+          branch: ${{ inputs.version }}-draft
           base: draft
           title: ${{ inputs.version }}
           assignees: ${{ github.actor }}
@@ -75,7 +73,7 @@ jobs:
           add-paths: |
             posts/*.adoc
           commit-message: ${{ inputs.version }}
-          branch: ${{ inputs.version }}
+          branch: ${{ inputs.version }}-staging
           base: staging
           title: ${{ inputs.version }}
           assignees: ${{ github.actor }}
